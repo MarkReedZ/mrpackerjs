@@ -1,9 +1,29 @@
+
+mrpacker = new function() {
+  var ret = {};
+  ret.pack = pack;
+  ret.unpack = unpack;
+  ret.load = unpack;
+  ret.dump = pack;
+  ret.encode = pack;
+  ret.decode = unpack;
+  
+  enc = mrpacker_getEncoder();
+  dec = mrpacker_getDecoder();
+
+  function pack(o) {
+    return enc.encode(o);
+  }   
+  function unpack(o) {
+    return dec.decode(o);
+  }   
+
 function mrpacker_getDecoder() {
   var d = {};
   d.decode = decode;
 
-  const float64Array = new Float64Array(1);
-  const uintF64 = new Uint8Array(float64Array.buffer);
+  var float64Array = new Float64Array(1);
+  var uintF64 = new Uint8Array(float64Array.buffer);
   
 
   function decode(arr) {
@@ -192,8 +212,8 @@ function mrpacker_getEncoder() {
   e.off = 0;
   e.arr =  new Uint8Array(2048);
 
-  const float64Array = new Float64Array(1);
-  const uInt8Float64Array = new Uint8Array(float64Array.buffer);
+  var float64Array = new Float64Array(1);
+  var uInt8Float64Array = new Uint8Array(float64Array.buffer);
 
   funcs = {
     "function":  nul,
@@ -354,4 +374,6 @@ function mrpacker_getEncoder() {
   //};
 
   return e;
+}
+  return ret;
 }
