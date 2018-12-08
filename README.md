@@ -6,7 +6,7 @@ Javascript mrpacker library - faster and smaller than JSON
 Include it with
 
 ```html
-<script src="https://rawgit.com/MarkReedZ/mrpackerjs/master/mrpacker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/MarkReedZ/mrpackerjs/mrpacker.min.js"></script>
 ```
 
 And test with
