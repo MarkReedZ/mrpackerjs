@@ -1,0 +1,3 @@
+
+ closure-compiler --js mrpacker.js --js_output_file mrpacker.min.js
+

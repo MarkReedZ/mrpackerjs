@@ -210,7 +210,7 @@ function mrpacker_getEncoder() {
   e.encode = encode;
   e.enc = enc;
   e.off = 0;
-  e.arr =  new Uint8Array(2048);
+  e.arr =  new Uint8Array(20048); // TODO This is the max byte size of the output.  Can we grow this buffer
 
   var float64Array = new Float64Array(1);
   var uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -221,7 +221,7 @@ function mrpacker_getEncoder() {
     "boolean":   bool,
     "number":    number,
     "object":    object,
-    "string":    string,
+    "string":    string
   };
 
   function encode( o ) {
