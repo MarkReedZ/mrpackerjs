@@ -204,7 +204,7 @@ function mrpacker_getEncoder() {
   e.encode = encode;
   e.enc = enc;
   e.off = 0;
-  e.arr =  new Uint8Array(20048); // TODO This is the max byte size of the output.  Can we grow this buffer
+  e.arr =  new Uint8Array(40048); // TODO This is the max byte size of the output.  Can we grow this buffer
 
   var float64Array = new Float64Array(1);
   var uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -234,6 +234,20 @@ function mrpacker_getEncoder() {
   function bool( o ) {
     e.arr[e.off++] = o ? 0x61 : 0x62;
   }
+  function bigint( o ) {
+      i = o;
+      if ( i < 0 ) e.arr[e.off++] = 0x64;
+      else         e.arr[e.off++] = 0x65;
+      e.arr[e.off+7] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+6] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+5] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+4] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+3] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+2] = i&0xFFn; i = i >> 8;
+      e.arr[e.off+1] = i&0xFFn; i = i >> 8;
+      e.arr[e.off] = i&0xFFn;
+      e.off += 8;
+  }
 
   function number( o ) {
     var i = o | 0;
@@ -253,13 +267,13 @@ function mrpacker_getEncoder() {
     } else {
       if ( i < 0 ) e.arr[e.off++] = 0x67;
       else         e.arr[e.off++] = 0x68;
-      e.arr[e.off+3] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
-      i = i >>> 8;
-      e.arr[e.off+1] = i;
-      i = i >>> 8;
-      e.arr[e.off] = i;
+      e.arr[e.off+3] = i&0xFF;
+      i = i >> 8;
+      e.arr[e.off+2] = i&0xFF;
+      i = i >> 8;
+      e.arr[e.off+1] = i&0xFF;
+      i = i >> 8;
+      e.arr[e.off] = i&0xFF;
       e.off += 4;
     }
   }
