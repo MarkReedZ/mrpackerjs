@@ -64,23 +64,17 @@ function mrpacker_getDecoder() {
     }
     if ( d.arr[d.off] == 0x64 ) { 
       d.off += 1;
-      var ret = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
-      d.off += 4;
-      // TODO Use int 64? 
-      //var view = new DataView(d.arr.buffer, d.off, 4);
-      //d.off += 8;
-      //return view.getInt32();
-      //var ret = new Int64BE(d.arr.slice(d.off,d.off+8) );
-      return ret;
+      //var ret = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      //d.off += 4;
+      var dv = new DataView(d.arr.slice(d.off,d.off+8).reverse().buffer, 0, 8);
+      d.off += 8;
+      return dv.getBigInt64();
     }
     if ( d.arr[d.off] == 0x65 ) { 
       d.off += 1;
-      var ret = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
-      //var view = new DataView(d.arr.buffer, d.off, 4);
-      //d.off += 8;
-      //return view.getUint32();
-      //var ret = new Uint64BE(d.arr.slice(d.off,d.off+8) );
-      return ret;
+      var dv = new DataView(d.arr.slice(d.off,d.off+8).reverse().buffer, 0, 8);
+      d.off += 8;
+      return dv.getBigUint64();
     }
     if ( d.arr[d.off] == 0x67 ) { 
       d.off += 1;
