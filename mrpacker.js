@@ -40,7 +40,8 @@ function mrpacker_getDecoder() {
     }
     if ( d.arr[d.off] == 0x66 ) { 
       d.off += 1;
-      var len = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      //var len = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
       //var view = new DataView(d.arr.buffer, d.off, 4);
       //d.off += 4;
       //var len = view.getInt32();
@@ -78,21 +79,23 @@ function mrpacker_getDecoder() {
     }
     if ( d.arr[d.off] == 0x67 ) { 
       d.off += 1;
-      return (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      return (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
+      //return (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
       //var view = new DataView(d.arr.buffer, d.off, 4);
       //d.off += 4;
       //return view.getInt32();
     }
     if ( d.arr[d.off] == 0x68 ) { 
       d.off += 1;
-      return (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      //return (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      return (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
       //var view = new DataView(d.arr.buffer, d.off, 4);
       //d.off += 4;
       //return view.getUint32();
     }
     if ( d.arr[d.off] == 0x69 ) { 
       d.off += 1;
-      var len = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
       var ret = new Array(len);
       for (var i = 0; i < len; i++) {
         ret[i] = dec();
@@ -101,7 +104,7 @@ function mrpacker_getDecoder() {
     }
     if ( d.arr[d.off] == 0x6A ) { 
       d.off += 1;
-      var len = (d.arr[d.off++] << 24) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 8) | d.arr[d.off++];
+      var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
       var ret = {};
       for (var i = 0; i < len; i++) {
         ret[dec()] = dec();
@@ -281,13 +284,13 @@ function mrpacker_getEncoder() {
     } else {
       if ( i < 0 ) e.arr[e.off++] = 0x67;
       else         e.arr[e.off++] = 0x68;
-      e.arr[e.off+3] = i&0xFF;
-      i = i >> 8;
-      e.arr[e.off+2] = i&0xFF;
+      e.arr[e.off+0] = i&0xFF;
       i = i >> 8;
       e.arr[e.off+1] = i&0xFF;
       i = i >> 8;
-      e.arr[e.off] = i&0xFF;
+      e.arr[e.off+2] = i&0xFF;
+      i = i >> 8;
+      e.arr[e.off+3] = i&0xFF;
       e.off += 4;
     }
   }
@@ -324,13 +327,13 @@ function mrpacker_getEncoder() {
     } else {
       e.arr[e.off++] = 0x66;
       var i = l;
-      e.arr[e.off+3] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
+      e.arr[e.off] = i;
       i = i >>> 8;
       e.arr[e.off+1] = i;
       i = i >>> 8;
-      e.arr[e.off] = i;
+      e.arr[e.off+2] = i;
+      i = i >>> 8;
+      e.arr[e.off+3] = i;
       e.off += 4;
       strToArr(o);
     }
@@ -349,13 +352,13 @@ function mrpacker_getEncoder() {
     } else {
       e.arr[e.off++] = 0x6A;
       var i = l;
-      e.arr[e.off+3] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
+      e.arr[e.off+0] = i;
       i = i >>> 8;
       e.arr[e.off+1] = i;
       i = i >>> 8;
-      e.arr[e.off] = i;
+      e.arr[e.off+2] = i;
+      i = i >>> 8;
+      e.arr[e.off+3] = i;
       e.off += 4;
     }
     for (var i = 0; i < l; i++) {
@@ -372,13 +375,13 @@ function mrpacker_getEncoder() {
     } else {
       e.arr[e.off++] = 0x69;
       var i = l;
-      e.arr[e.off+3] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
+      e.arr[e.off+0] = i;
       i = i >>> 8;
       e.arr[e.off+1] = i;
       i = i >>> 8;
-      e.arr[e.off] = i;
+      e.arr[e.off+2] = i;
+      i = i >>> 8;
+      e.arr[e.off+3] = i;
       e.off += 4;
     }
     keys.forEach(function(key) {
