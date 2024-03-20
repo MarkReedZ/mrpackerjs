@@ -1,3 +1,4 @@
+sudo apt install minify
 
- closure-compiler --js mrpacker.js --js_output_file mrpacker.min.js
+ minify -o mrpacker.min.js mrpacker.js
 

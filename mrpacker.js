@@ -215,7 +215,8 @@ function mrpacker_getEncoder() {
     "boolean":   bool,
     "number":    number,
     "object":    object,
-    "string":    string
+    "string":    string,
+    "bigint":    bigint
   };
 
   function encode( o ) {
@@ -224,7 +225,8 @@ function mrpacker_getEncoder() {
     return e.arr.slice(0,e.off);
   }  
   function enc(o) {
-    funcs[typeof o](o);
+    typ = typeof o;
+    funcs[typ](o);
   }
 
   function nul( o ) {
@@ -236,17 +238,29 @@ function mrpacker_getEncoder() {
   }
   function bigint( o ) {
       i = o;
-      if ( i < 0 ) e.arr[e.off++] = 0x64;
-      else         e.arr[e.off++] = 0x65;
-      e.arr[e.off+7] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+6] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+5] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+4] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+3] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+2] = i&0xFFn; i = i >> 8;
-      e.arr[e.off+1] = i&0xFFn; i = i >> 8;
-      e.arr[e.off] = i&0xFFn;
-      e.off += 8;
+      if ( i >=0n && i < 32n ) {
+        e.arr[e.off++] = 0xC0 | Number(i);
+      } else if ( i < 0xFFFFFFFFn && i > -0xFFFFFFFFn ) {
+        if ( i < 0 ) e.arr[e.off++] = 0x67;
+        else         e.arr[e.off++] = 0x68;
+        e.arr[e.off+3] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+2] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+1] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off]   = Number(i&0xFFn);
+        e.off += 4;
+      } else {
+        if ( i < 0 ) e.arr[e.off++] = 0x64;
+        else         e.arr[e.off++] = 0x65;
+        e.arr[e.off+7] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+6] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+5] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+4] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+3] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+2] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off+1] = Number(i&0xFFn); i = i >> 8n;
+        e.arr[e.off]   = Number(i&0xFFn);
+        e.off += 8;
+      }
   }
 
   function number( o ) {
