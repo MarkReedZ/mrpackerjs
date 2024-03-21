@@ -266,9 +266,12 @@ function mrpacker_getEncoder() {
       }
   }
 
+  function isInteger(n) {
+    return n === +n && n === (n|0);
+  }
+
   function number( o ) {
-    var i = o | 0;
-    if (i !== o) { // Float
+    if (!Number.isInteger(o)) { // Float
       e.arr[e.off++] = 0x63;
       float64Array[0] = o;
       e.arr[e.off++] = uInt8Float64Array[0];
@@ -279,19 +282,27 @@ function mrpacker_getEncoder() {
       e.arr[e.off++] = uInt8Float64Array[5];
       e.arr[e.off++] = uInt8Float64Array[6];
       e.arr[e.off++] = uInt8Float64Array[7];
-    } else if ( i >=0 && i < 32 ) {
-      e.arr[e.off++] = 0xC0 | i;
-    } else {
-      if ( i < 0 ) e.arr[e.off++] = 0x67;
+    } else if ( o >=0 && o < 32 ) {
+      e.arr[e.off++] = 0xC0 | o;
+    } else if ( o < 0xFFFFFFFF && o > -0xFFFFFFFF ) {
+      if ( o < 0 ) e.arr[e.off++] = 0x67;
       else         e.arr[e.off++] = 0x68;
-      e.arr[e.off+0] = i&0xFF;
-      i = i >> 8;
-      e.arr[e.off+1] = i&0xFF;
-      i = i >> 8;
-      e.arr[e.off+2] = i&0xFF;
-      i = i >> 8;
-      e.arr[e.off+3] = i&0xFF;
-      e.off += 4;
+      e.arr[e.off+0] = o&0xFF; o = o >> 8;
+      e.arr[e.off+1] = o&0xFF; o = o >> 8;
+      e.arr[e.off+2] = o&0xFF; o = o >> 8;
+      e.arr[e.off+3] = o&0xFF; e.off += 8;
+    } else {
+      var i = BigInt(o);
+      if ( i < 0 ) e.arr[e.off++] = 0x64;
+      else         e.arr[e.off++] = 0x65;
+      e.arr[e.off+0] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+1] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+2] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+3] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+4] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+5] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+6] = Number(i&0xFFn); i = i >> 8n;
+      e.arr[e.off+7] = Number(i&0xFFn); e.off += 8;
     }
   }
 
