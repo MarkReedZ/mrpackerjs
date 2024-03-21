@@ -93,21 +93,22 @@ function mrpacker_getDecoder() {
       //d.off += 4;
       //return view.getUint32();
     }
-    if ( d.arr[d.off] == 0x69 ) { 
+    if ( d.arr[d.off] == 0x69 ) {  // Dict
       d.off += 1;
       var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
       var ret = new Array(len);
       for (var i = 0; i < len; i++) {
-        ret[i] = dec();
+        ret[dec()] = dec();
       }
       return ret;
     }
-    if ( d.arr[d.off] == 0x6A ) { 
+    if ( d.arr[d.off] == 0x6A ) {  // List
       d.off += 1;
       var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
+      console.log("DELME list len", len);
       var ret = {};
       for (var i = 0; i < len; i++) {
-        ret[dec()] = dec();
+        ret[i] = dec();
       }
       return ret;
     }
@@ -363,14 +364,10 @@ function mrpacker_getEncoder() {
     } else {
       e.arr[e.off++] = 0x6A;
       var i = l;
-      e.arr[e.off+0] = i;
-      i = i >>> 8;
-      e.arr[e.off+1] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
-      i = i >>> 8;
-      e.arr[e.off+3] = i;
-      e.off += 4;
+      e.arr[e.off+0] = i; i = i >>> 8;
+      e.arr[e.off+1] = i; i = i >>> 8;
+      e.arr[e.off+2] = i; i = i >>> 8;
+      e.arr[e.off+3] = i; e.off += 4;
     }
     for (var i = 0; i < l; i++) {
       e.enc(o[i]);
@@ -386,14 +383,10 @@ function mrpacker_getEncoder() {
     } else {
       e.arr[e.off++] = 0x69;
       var i = l;
-      e.arr[e.off+0] = i;
-      i = i >>> 8;
-      e.arr[e.off+1] = i;
-      i = i >>> 8;
-      e.arr[e.off+2] = i;
-      i = i >>> 8;
-      e.arr[e.off+3] = i;
-      e.off += 4;
+      e.arr[e.off+0] = i; i = i >>> 8;
+      e.arr[e.off+1] = i; i = i >>> 8;
+      e.arr[e.off+2] = i; i = i >>> 8;
+      e.arr[e.off+3] = i; e.off += 4;
     }
     keys.forEach(function(key) {
       e.enc(key);
