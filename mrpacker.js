@@ -96,7 +96,7 @@ function mrpacker_getDecoder() {
     if ( d.arr[d.off] == 0x69 ) {  // Dict
       d.off += 1;
       var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
-      var ret = new Array(len);
+      var ret = {};
       for (var i = 0; i < len; i++) {
         ret[dec()] = dec();
       }
@@ -105,8 +105,7 @@ function mrpacker_getDecoder() {
     if ( d.arr[d.off] == 0x6A ) {  // List
       d.off += 1;
       var len = (d.arr[d.off++] << 0) | (d.arr[d.off++] << 8) | (d.arr[d.off++] << 16) | (d.arr[d.off++] << 24);
-      console.log("DELME list len", len);
-      var ret = {};
+      var ret = new Array(len);
       for (var i = 0; i < len; i++) {
         ret[i] = dec();
       }
