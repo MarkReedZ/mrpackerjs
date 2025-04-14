@@ -207,7 +207,8 @@ function mrpacker_getEncoder() {
   e.encode = encode;
   e.enc = enc;
   e.off = 0;
-  e.arr =  new Uint8Array(40048); // TODO This is the max byte size of the output.  Can we grow this buffer
+  e.arr =  new Uint8Array(512*1024); 
+  e.textEncoder = new TextEncoder();
 
   var float64Array = new Float64Array(1);
   var uInt8Float64Array = new Uint8Array(float64Array.buffer);
@@ -225,6 +226,7 @@ function mrpacker_getEncoder() {
   function encode( o ) {
     e.off = 0;
     enc(o);
+    console.log("DELME slice", e.arr.slice(0,e.off));
     return e.arr.slice(0,e.off);
   }  
   function enc(o) {
@@ -306,35 +308,17 @@ function mrpacker_getEncoder() {
     }
   }
 
-  function strToArr(str ) {
-    for (var i=0; i < str.length; i++) {
-        var charcode = str.charCodeAt(i);
-      if (charcode < 0x80) e.arr[e.off++] = charcode;
-      else if (charcode < 0x800) {
-        e.arr[e.off++] = 0xc0 | (charcode >> 6);
-        e.arr[e.off++] = 0x80 | (charcode & 0x3f);
-      }
-      else if (charcode < 0xd800 || charcode >= 0xe000) {
-        e.arr[e.off++] = 0xe0 | (charcode >> 12);
-        e.arr[e.off++] = 0x80 | ((charcode>>6) & 0x3f);
-        e.arr[e.off++] = 0x80 | (charcode & 0x3f);
-      }
-      else {
-        i++;
-        charcode = 0x10000 + (((charcode & 0x3ff)<<10)
-                  | (str.charCodeAt(i) & 0x3ff))
-        e.arr[e.off++] = 0xf0 | (charcode >>18);
-        e.arr[e.off++] = 0x80 | ((charcode>>12) & 0x3f);
-        e.arr[e.off++] = 0x80 | ((charcode>>6) & 0x3f);
-        e.arr[e.off++] = 0x80 | (charcode & 0x3f);
-      }
-    }
-  }
   function string( o ) {
-    var l = o.length;
+    const strArray = e.textEncoder.encode(o);
+    var l = strArray.length;
+    console.log(o);
+    console.log(strArray.length);
+    console.log(strArray);
     if ( l < 32 ) {
       e.arr[e.off++] = 0x80 | l;
-      strToArr(o);
+      e.arr.set(strArray, e.off);
+      e.off += l;
+      //strToArr(o);
     } else {
       e.arr[e.off++] = 0x66;
       var i = l;
@@ -346,7 +330,9 @@ function mrpacker_getEncoder() {
       i = i >>> 8;
       e.arr[e.off+3] = i;
       e.off += 4;
-      strToArr(o);
+      e.arr.set(strArray, e.off);
+      e.off += l;
+      //strToArr(o);
     }
   }
 
